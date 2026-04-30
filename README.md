@@ -60,12 +60,34 @@ The Orchestrator monitors "needs_followup" flags from the Evaluator. If a candid
    python3 main.py
    ```
 
-## Example Scenario: Probing for Depth
+## Example Interview Transcripts
 
-**Interviewer:** "How do you handle a memory leak in a Python application?"
-**User:** "I'd just restart the server or check the logs."
-**Evaluator (Internal):** Flags as `is_weak: true` and `needs_followup: true`.
-**Interviewer (Follow-up):** *"Restarting is a temporary fix, but if the leak is in the code, it will return. How would you actually isolate the source of the leak? Are there specific tools or libraries you'd use to inspect the heap?"*
+### 1. Strong Candidate (Senior Backend Engineer)
+**Focus:** Scalability & Performance
+
+*   **Interviewer:** "Could you describe a situation where you had to design a system to handle a 10x spike in traffic?"
+*   **Candidate:** "In my last role, we had a flash-sale event. I implemented a multi-layered caching strategy using Redis and moved all non-critical writes to an asynchronous RabbitMQ queue. We also used consistent hashing for load balancing."
+*   **Interviewer (Follow-up):** "Regarding the move to asynchronous writes—how did you handle potential data consistency issues?"
+*   **Candidate:** "We moved to an 'eventual consistency' model. We gave users a 'Processing' status immediately and used WebSockets to push a notification once the write was confirmed in the primary DB."
+*   **Verdict:** Strong depth in distributed systems and architectural tradeoffs.
+
+### 2. Weak Candidate (Junior Frontend Developer)
+**Focus:** React & Performance
+
+*   **Interviewer:** "If you have a large list of components rendering slowly, what are some ways you might optimize that?"
+*   **Candidate:** "I would probably just use `useMemo` on everything to make sure it doesn't re-render too much."
+*   **Interviewer (Follow-up):** "Using `useMemo` everywhere has overhead. How would you handle a list of 1,000 items where only one item changes?"
+*   **Candidate:** "I'm not really sure, I usually just follow what the tutorials say. Maybe I'd use a different library?"
+*   **Verdict:** Lacks technical depth; relies on generic advice without understanding underlying principles.
+
+### 3. Tricky Edge Case (Pivot from "I don't know")
+**Focus:** SQL to Python Pivot
+
+*   **Interviewer:** "Could you explain the difference between a `WHERE` clause and a `HAVING` clause in SQL?"
+*   **Candidate:** "I actually haven't used SQL in a while. I mostly do my analysis in Python these days. Can we talk about that instead?"
+*   **Interviewer (Pivot):** "No problem! In Python, if you were cleaning a dataset in Pandas and found missing values, how would you decide whether to drop those rows or fill them?"
+*   **Candidate:** "It depends on the percentage. If it's small, I'd use the median to preserve other row information. If it's a key metric, I'd have to drop the rows to avoid bias."
+*   **Verdict:** Successfully handled a technical gap by pivoting to a known strength with sound reasoning.
 
 ## Future Roadmap
 
