@@ -1,0 +1,31 @@
+Analyze the candidate's latest response for a {role} role.
+
+Inputs:
+- Focus Area: {focus_area}
+- Question: {question}
+- Answer: {answer}
+
+Evaluation Criteria:
+1. Scoring: Rate 1-10 for Clarity, Depth, Accuracy, Communication, and Completeness.
+2. Flagging: set true/false for is_weak, is_strong, needs_followup, is_off_topic.
+3. Reasoning: A one-sentence technical justification.
+
+You MUST return the data in this exact JSON structure:
+{{
+  "scores": {{
+    "clarity": 10,
+    "depth": 10,
+    "accuracy": 10,
+    "communication": 10,
+    "completeness": 10
+  }},
+  "flags": {{
+    "is_weak": false,
+    "is_strong": true,
+    "needs_followup": false,
+    "is_off_topic": false
+  }},
+  "reasoning": "Explain your scores here."
+}}
+
+Output must be valid JSON only.
