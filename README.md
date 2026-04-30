@@ -23,6 +23,13 @@ graph TD
     Coach -->|Markdown Report| User
 ```
 
+### 🔄 Interaction Flow
+
+Each turn follows a structured loop:
+**Candidate Response** → **Evaluator** (JSON scoring & flags) → **Orchestrator Decision** → **Interviewer Next Question**
+
+This loop enables adaptive questioning and real-time difficulty calibration.
+
 ## Technical Stack
 
 - **Language:** Python 3.10+
@@ -43,7 +50,22 @@ I chose a tiered model approach:
 - **Llama 3.1 8B** is used for the Evaluator. Since the Evaluator's job is specific data extraction into JSON, the smaller model provides 10x faster response times without sacrificing accuracy for this specific task.
 
 ### 3. Adaptive Turn Logic
-The Orchestrator monitors "needs_followup" flags from the Evaluator. If a candidate provides a vague answer, the system dynamically extends the interview length to ensure the topic is fully explored, mimicking a real-world senior-level interview.
+The Orchestrator monitors "needs_followup" flags from the Evaluator. If a candidate provides a vague answer, the system dynamically extends the interview length to ensure the topic is fully explored.
+
+### 4. Handling Real-World Messiness
+The system is designed to handle imperfect user input such as:
+*   **"I don't know" responses:** The system pivots to a related but different topic.
+*   **Vague or partial answers:** The Evaluator flags these, triggering a guided follow-up.
+*   **Off-topic replies:** Redirection to keep the interview productive.
+
+## 🧩 Why This System Matters
+
+Most mock interview tools rely on static question lists and binary feedback. This system goes beyond that by:
+*   **Simulating real interviewer behavior** through adaptive questioning.
+*   **Separating concerns** into specialized agents (reasoning, evaluation, coaching).
+*   **Producing structured, multi-dimensional feedback** instead of generic responses.
+
+This architecture makes the system closer to a real-world AI assistant rather than a simple chatbot.
 
 ## Setup & Execution
 
@@ -66,7 +88,28 @@ The Orchestrator monitors "needs_followup" flags from the Evaluator. If a candid
 **Focus:** Scalability & Performance
 
 *   **Interviewer:** "Could you describe a situation where you had to design a system to handle a 10x spike in traffic?"
-*   **Candidate:** "In my last role, we had a flash-sale event. I implemented a multi-layered caching strategy using Redis and moved all non-critical writes to an asynchronous RabbitMQ queue. We also used consistent hashing for load balancing."
+*   **Candidate:** "In my last role, we had a flash-sale event. I implemented a multi-layered caching strategy using Redis and moved all non-critical writes to an asynchronous RabbitMQ queue."
+
+**Evaluator Output (internal JSON):**
+```json
+{
+  "scores": {
+    "clarity": 9,
+    "depth": 8,
+    "accuracy": 10,
+    "communication": 9,
+    "completeness": 8
+  },
+  "flags": {
+    "is_weak": false,
+    "is_strong": true,
+    "needs_followup": false,
+    "is_off_topic": false
+  },
+  "reasoning": "Candidate correctly identified caching and message queues as primary scaling mechanisms."
+}
+```
+
 *   **Interviewer (Follow-up):** "Regarding the move to asynchronous writes—how did you handle potential data consistency issues?"
 *   **Candidate:** "We moved to an 'eventual consistency' model. We gave users a 'Processing' status immediately and used WebSockets to push a notification once the write was confirmed in the primary DB."
 *   **Verdict:** Strong depth in distributed systems and architectural tradeoffs.
